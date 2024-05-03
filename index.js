@@ -19,7 +19,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
 app.get("/", (req, res) => {
-  res.send("Working From V1");
+  res.send("🚀 Working From V1");
 });
 
 app.post("/order", async (req, res) => {
