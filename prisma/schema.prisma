@@ -1,0 +1,41 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// prisma/schema.prisma
+datasource db {
+  provider  = "postgresql"
+  url  	    = env("DATABASE_URL")
+  directUrl = env("DATABASE_URL_UNPOOLED")
+}
+
+model Payment {
+  id                String      @id
+  amount            Int
+  currency          String
+  status            String
+  order_id          String
+  method            String
+  description       String
+  vpa               String
+  email             String
+  contact           String
+  fee               Int
+  tax               Int
+  rrn               String?
+  upi_transaction_id String?
+  notes             Json
+  created_at        DateTime  
+}
+
+model Order {
+  id            String      @id
+  amount        Int
+  amount_paid   Int
+  amount_due    Int
+  currency      String
+  receipt       String
+  status        String
+  attempts      Int
+  created_at    DateTime
+}
