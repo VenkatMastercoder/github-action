@@ -18,6 +18,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
 
+app.get("/", (req, res) => {
+  res.send("Working From V1");
+});
+
 app.post("/order", async (req, res) => {
   try {
     const razorpay = new Razorpay({
@@ -128,12 +132,12 @@ app.post("/create-checkout-session", async (req, res) => {
         name: product.dish,
         images: [product.imgdata],
       },
-     unit_amount: Math.round(product.price * 100),
+      unit_amount: Math.round(product.price * 100),
     },
     quantity: product.qnty,
   }));
 
-  console.log(lineItems)
+  console.log(lineItems);
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
@@ -146,24 +150,32 @@ app.post("/create-checkout-session", async (req, res) => {
   res.json({ id: session.id });
 });
 
-app.post('stripe/webhook', express.raw({type: 'application/json'}), (request, response) => {
-  const sig = request.headers['stripe-signature'];
+app.post(
+  "stripe/webhook",
+  express.raw({ type: "application/json" }),
+  (request, response) => {
+    const sig = request.headers["stripe-signature"];
 
-  let event;
+    let event;
 
-  try {
-    event = stripe.webhooks.constructEvent(request.body, sig, process.env.STRIPE_SECRET);
-  } catch (err) {
-    response.status(400).send(`Webhook Error: ${err.message}`);
-    return;
+    try {
+      event = stripe.webhooks.constructEvent(
+        request.body,
+        sig,
+        process.env.STRIPE_SECRET
+      );
+    } catch (err) {
+      response.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
+
+    // Handle the event
+    console.log(`Unhandled event type ${event.type}`);
+
+    // Return a 200 response to acknowledge receipt of the event
+    response.send();
   }
-
-  // Handle the event
-  console.log(`Unhandled event type ${event.type}`);
-
-  // Return a 200 response to acknowledge receipt of the event
-  response.send();
-});
+);
 
 app.get("/data", async (req, res) => {
   try {
