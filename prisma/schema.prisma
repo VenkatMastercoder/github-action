@@ -39,3 +39,4 @@ model Order {
   attempts      Int
   created_at    DateTime
 }
+
